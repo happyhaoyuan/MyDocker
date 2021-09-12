@@ -1,4 +1,4 @@
-FROM ubuntu:21.04
+FROM ubuntu:21.10
 
 ENV TERM xterm
 RUN echo "[$(tput setaf 6)INFO$(tput sgr0)] Start to build docker"
@@ -7,19 +7,10 @@ RUN echo "[$(tput setaf 6)INFO$(tput sgr0)] Start to build docker"
 RUN apt-get update -y
 RUN echo "[$(tput setaf 6)INFO$(tput sgr0)] Update finished"
 
-# set timezone
-ARG TZ=America/Los_Angeles
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
-&&  echo $TZ > /etc/timezone
-# set locale
-RUN locale-gen en_US.UTF-8
-ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 # create directory
 RUN mkdir -p /workdir /logs
 RUN chmod -R 777 /workdir /logs
-# spare
-EXPOSE 5006
-RUN echo "[$(tput setaf 6)INFO$(tput sgr0)] Setting finished"
+RUN echo "[$(tput setaf 6)INFO$(tput sgr0)] Creating finished"
 
 # base
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -42,9 +33,20 @@ RUN wget https://raw.githubusercontent.com/powerline/powerline/develop/font/10-p
 RUN wget https://raw.githubusercontent.com/powerline/powerline/develop/font/PowerlineSymbols.otf -O /workdir/PowerlineSymbols.otf
 RUN mkdir -p /usr/share/fonts/OTF
 RUN cp /workdir/10-powerline-symbols.conf /usr/share/fonts/OTF/
-RUN mv /workdir/10-powerline-symbols.conf /etc/fonts/conf.d/
+#RUN mv /workdir/10-powerline-symbols.conf /etc/fonts/conf.d/
 RUN mv /workdir/PowerlineSymbols.otf /usr/share/fonts/OTF/
 RUN echo "[$(tput setaf 6)INFO$(tput sgr0)] Utils finished!"
+
+# set timezone
+ARG TZ=America/Los_Angeles
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
+&&  echo $TZ > /etc/timezone
+# set locale
+RUN locale-gen en_US.UTF-8
+ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
+# spare
+EXPOSE 5006
+RUN echo "[$(tput setaf 6)INFO$(tput sgr0)] Setting finished"
 
 # clean
 RUN npm cache clean --force
